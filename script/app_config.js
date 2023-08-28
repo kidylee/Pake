@@ -24,6 +24,7 @@ const variables = {
   name: process.env.NAME,
   title: process.env.TITLE,
   nameZh: process.env.NAME_ZH,
+  releaseVersion: process.env.RELEASE_VERSION,
 
   pakeConfigPath: 'src-tauri/pake.json',
   tauriConfigPath: 'src-tauri/tauri.conf.json',
@@ -95,28 +96,28 @@ updatePlatformConfig(platformConfig, platformVariables);
 save();
 
 function validate() {
-  if ('URL' in process.env === false) {
+  if (!('URL' in process.env)) {
     console.log('URL is not set');
     process.exit(1);
   }
 
   console.log(`URL: ${process.env.URL}`);
 
-  if ('NAME' in process.env === false) {
+  if (!('NAME' in process.env)) {
     console.log('NAME is not set');
     process.exit(1);
   }
 
   console.log(`NAME: ${process.env.NAME}`);
 
-  if ('TITLE' in process.env === false) {
+  if (!('TITLE' in process.env)) {
     console.log('TITLE is not set');
     process.exit(1);
   }
 
   console.log(`TITLE: ${process.env.TITLE}`);
 
-  if ('NAME_ZH' in process.env === false) {
+  if (!('NAME_ZH' in process.env)) {
     console.log('NAME_ZH is not set');
     process.exit(1);
   }
@@ -132,6 +133,10 @@ function updateTauriJson() {
   const url = new URL(variables.url);
   tauriJson.tauri.security.dangerousRemoteDomainIpcAccess[0].domain = url.hostname;
   tauriJson.package.productName = variables.title;
+
+  if(variables.releaseVersion && variables.releaseVersion.length > 0){
+    tauriJson.package.version = variables.releaseVersion;
+  }
 
   writeFileSync('src-tauri/tauri.conf.json', JSON.stringify(tauriJson, null, 2));
 }
